@@ -1,0 +1,21 @@
+Setting up SP_Analytics project
+
+PostgreSQL as the backend. Database Name: sp_analytics
+
+
+Copying data from previous temporary dtabase
+
+	- pg_dump -t events -t cells -t amenities postgres | psql sp_analytics 
+
+Creating a new application user then granting full access on all tables
+
+	- CREATE create user capstone with password 'sp';
+	- GRANT ALL PRIVILEGES ON events TO capstone;
+	- GRANT ALL PRIVILEGES ON cells TO capstone;
+	- GRANT ALL PRIVILEGES ON amenities TO capstone;
+
+
+
+Using Flask Framework for reporting and analytics
+
+Using PsycoPG2 for data access from within Flask
