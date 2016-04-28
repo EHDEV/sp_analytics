@@ -3,6 +3,90 @@
     {#    <script src="js/jquery-1.11.0.min.js"></script>#}
     {#    <script src="js/bootstrap.min.js"></script>#}
     {#    <script src="js/wow.min.js"></script>#}
+    <style>
+        .mycontent-left {
+            border-right: 1px dashed #333F33;
+            text-align: center;
+            font-weight: 600;
+            font-size: 40px;
+
+        }
+
+        .green {
+            color: #1ABB9C;
+        }
+
+        .tile_stats_count .right {
+            padding-left: 10px;
+            height: 100%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .tile_stats_count .count {
+            font-size: 40px;
+            line-height: 47px;
+            font-weight: 600;
+        }
+
+        .uptitle {
+            color: #73879C;
+            font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.471;
+            text-align-all: right;
+        }
+
+        body {
+            color: #73879C;
+            font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+            font-weight: 400;
+            line-height: 1.471;
+            text-align-all: right;
+        }
+
+        .metrics {
+            color: slategray;
+            font-size: 40px;
+            font-weight: 600;
+        }
+
+        a {
+            color: slategray;
+            font-size: 20px;
+            font-weight: 300;
+        }
+
+        .tile_stats_count .count small {
+            font-size: 20px;
+            line-height: 20px;
+            font-weight: 600;
+        }
+
+        .count_bottom i {
+            width: 12px;
+        }
+
+        .tile_stats_count .right {
+            padding-left: 10px;
+            height: 100%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .container h1 {
+            font-size: 30px;
+            margin: 12px;
+            color: darkslategray;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        span {
+            text-align: center;
+        }
+    </style>
 
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -14,7 +98,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" , type="text/css">
 
 {% endblock %}
 
@@ -41,7 +125,7 @@
 
             $('#container0').highcharts({
                 title: {
-                    text: 'Lifetime Location Updates by Hour of Day',
+                    text: 'Lifetime Call and Text Events by Hour of Day',
                     x: -20 //center
                 },
                 chart: {
@@ -55,6 +139,9 @@
                     x: -20
                 },
                 xAxis: {
+                    title: {
+                        text: 'Hour of Day'
+                    },
                     categories: cat
                 },
                 yAxis: {
@@ -86,11 +173,11 @@
 
             $('#container1').highcharts({
                 title: {
-                    text: 'Lifetime Location Updates by Hour of Day',
+                    text: 'Lifetime Call and Text Events by Hour of Day',
                     x: -20 //center
                 },
                 chart: {
-                    type: 'column'
+                    type: 'line'
                 },
                 legend: {
                     enabled: false
@@ -100,6 +187,10 @@
                     x: -20
                 },
                 xAxis: {
+
+                    title: {
+                        text: 'Hour of Day'
+                    },
                     categories: cat
                 },
                 yAxis: {
@@ -131,11 +222,11 @@
 
             $('#container2').highcharts({
                 title: {
-                    text: 'Lifetime Location Updates by Hour of Day',
+                    text: 'Lifetime Call and Text Events by Hour of Day',
                     x: -20 //center
                 },
                 chart: {
-                    type: 'column'
+                    type: 'area'
                 },
                 legend: {
                     enabled: false
@@ -145,6 +236,9 @@
                     x: -20
                 },
                 xAxis: {
+                    title: {
+                        text: 'Hour of Day'
+                    },
                     categories: cat
                 },
                 yAxis: {
@@ -175,7 +269,7 @@
 
             $('#container3').highcharts({
                 title: {
-                    text: 'Lifetime Location Updates by Hour of Day',
+                    text: 'Lifetime Call and Text Events by Hour of Day',
                     x: -20 //center
                 },
                 chart: {
@@ -228,89 +322,147 @@
                 }
         );
     </script>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title"> How </h3>
-        </div>
-        <div class="panel-body">
-            <div id="container0" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
-        </div>
-    </div>
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h3 class="panel-title"> How </h3>#}
+    {#        </div>#}
+    {#        <div class="panel-body">#}
+    {#            <div id="container0" style="min-width: 310px; height: 250px; margin: 0 auto"></div>#}
+    {#        </div>#}
+    {#    </div>#}
 
     <div class="container">
-        <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <a data-toggle="collapse"
-                           href="#collapseOne">
-                            Sentiment Chart
-                        </a>
-                    </h3>
-                </div>
-                <div id="collapseOne" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <div id="container1" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
-                    </div>
-                </div>
+        <row>
+            <div>
+                <h1 class="glyphicon glyphicon-stats"> Dashboard</h1>
+                <hr>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <a data-toggle="collapse"
-                           href="#collapseTwo">
-                            Trends Chart
-                        </a>
-                    </h3>
-                </div>
-                <div id="collapseTwo" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <div id="container2" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
-                    </div>
-                </div>
+        </row>
+        <div class="row">
+            <div class="col-md-2 mycontent-left green">
+                <span class="uptitle glyphicon glyphicon-user"> Total #  Active Users </span>
+
+                <div> 5432</div>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseThree">
-                            Volume Chart
-                        </a>
-                    </h3>
-                </div>
-                <div id="collapseThree" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <div id="container3" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
-                    </div>
-                </div>
+            <div class="col-md-2 mycontent-left">
+                <span class="uptitle glyphicon glyphicon-signal"> Total # Active Cell Towers </span>
+
+                <div class="metrics"> 2234</div>
             </div>
-            {# <div class="row">#}
-            {#    <div class="col-lg-12">#}
-            {#<table id="output" data-sort="true" style="width: 100%">#}
-            {#                        <thead>#}
-            {#                        {% for colname in d[0] %}#}
-            {#                            <th>#}
-            {#                                {{ colname }}#}
-            {#                            </th>#}
-            {#                        {% endfor %}#}
-            {#                        </thead>#}
-            {#                        <tbody>#}
-            {#                        {% for row in output %}#}
-            {#                       {% for row in d %}#}
-            {#                            <tr>#}
-            {#                                {% for datapoint in row %}#}
-            {##}
-            {#                                    <td>{{ datapoint }}</td>#}
-            {#                                {% endfor %}#}
-            {#                            </tr>#}
-            {#                        {% endfor %}#}
-            {#                        </tbody>#}
-            {#                    </table>#}
-            {#</div>#}
-            {#</div>#}
-            {#    <div class="col-xs-12">#}
-            {#        <div id="container2" style="min-width: 310px; height: 320px; margin: 0 auto"></div>#}
-            {#    </div>#}
+            <div class="col-md-2 mycontent-left">
+                <span class="uptitle glyphicon glyphicon-signal"> # Calls/Texts made/received per Day</span>
+
+                <div class="metrics"> 3202</div>
+            </div>
+            <div class="col-md-2 mycontent-left">
+                <span class="uptitle glyphicon glyphicon-user"> Average # of Users per Cell</span>
+
+                <div class="metrics">5433</div>
+            </div>
+            <div class="col-md-2 mycontent-left">
+                <span class="uptitle glyphicon glyphicon-signal"> # Cells Connected per User per Day</span>
+
+                <div class="metrics">4005</div>
+            </div>
+            <div class="col-md-2 mycontent-left">
+                <span class="uptitle glyphicon glyphicon-flag"> Total # Unique Amenities </span>
+
+                <div class="metrics"> 15096</div>
+            </div>
         </div>
-    </div>
+        <row>
+            <div>
+                <hr>
+            </div>
+        </row>
+        <div class="row">
+            <div class="col-md-4 mycontent-left green">
+                <a href="{{ url_for('cell_traffic')}}">All Cell Towers Heatmap</a>
+            </div>
+            <div class="col-md-4 mycontent-left green">
+                <a href="{{ url_for('popular_cells')}}">Cells by No. of Users Served</a>
+            </div>
+            <div class="col-md-4 mycontent-left green">
+                <a href="{{ url_for('trajectory')}}">User Trajectory Map</a>
+            </div>
+
+        </div>
+        <row>
+            <div>
+                <hr>
+            </div>
+        </row>
+        <div class="container">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a data-toggle="collapse"
+                               href="#collapseOne">
+                                User Activity
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div id="container0" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a data-toggle="collapse"
+                               href="#collapseTwo">
+                                User Behavior
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div id="container1" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseThree">
+                                Other
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div id="container2" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
+                        </div>
+                    </div>
+                </div>
+                {#</div>#}
+                {#<div class="row">#}
+                {#    <div class="col-lg-12">#}
+                {#        <table id="output" data-sort="true" style="width: 100%">#}
+                {#                        <thead>#}
+                {#                        {% for colname in dictionary[0] %}#}
+                {#                            <th>#}
+                {#                                {{ colname }}#}
+                {#                            </th>#}
+                {#                        {% endfor %}#}
+                {#                        </thead>#}
+                {#                        <tbody>#}
+                {#                        {% for row in output %}#}
+                {#                       {% for row in dictionary %}#}
+                {#                            <tr>#}
+                {#                                {% for datapoint in dictionary.row %}#}
+                {##}
+                {#                                    <td>{{ dictionary.row.datapoint }}</td>#}
+                {#                                {% endfor %}#}
+                {#                            </tr>#}
+                {#                       {% endfor %}#}
+                {#                        </tbody>#}
+                {#                    </table>#}
+                {#</div>#}
+            </div>
+        </div>
 {% endblock %}

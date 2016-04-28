@@ -1,14 +1,10 @@
-/*
-
-  Behavioral Similarity Matrix
-
- */
+-- Behavioral Similarity Matrix
 
 /*
 Feature: Total number of calls/texts made by user by hour blocks
  */
 
-CREATE MATERIALIZED VIEW user_calls_sms_count
+CREATE MATERIALIZED VIEW vw_user_call_sms_hour_block
   AS
 SELECT
 case when hour_of_day < 9 then
@@ -108,6 +104,8 @@ SELECT count(DISTINCT userid) user_count, startcellid
 from events
 GROUP BY startcellid
 ORDER BY user_count desc limit 3000;
+
+
 
 
 

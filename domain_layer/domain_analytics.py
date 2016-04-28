@@ -17,14 +17,15 @@ class domain_analytics:
             SELECT count(*) freq, date_part('hour', e.startts) hour_of_day
             FROM events e
             WHERE eventtype in (5,6,7)
-                  AND e.userid = '{}'
+                  --AND e.userid = '{}'
             GROUP BY
-              e.userid, hour_of_day
+              hour_of_day
             ORDER BY hour_of_day, freq DESC
             limit 50;
         '''.format(user_id)
 
-        data = dao.query(q)
+        data = self.dao.query(q)
+        return data
 
     def user_location_hourly(self, user_id, start_ts='', end_ts=''):
         params = dict(userid=user_id, starts=start_ts, end_ts=end_ts)
