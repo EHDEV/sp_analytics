@@ -1,0 +1,223 @@
+<!-- Bubble - Popular Antennas - Dynamic -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A simple visualization with CartoDB.js</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+
+  <style>
+    html, body, #map {
+      width:100%; 
+      height:100%; 
+      padding: 0; 
+      margin: 0;
+  </style>
+ 
+
+  <style type='cartocss/text' id='bubble'>
+	#popular_antennas
+	{
+	  marker-fill-opacity: 0.9;
+	  marker-line-color: #FFF;
+	  marker-line-width: 1;
+	  marker-line-opacity: 1;
+	  marker-placement: point;
+	  marker-multi-policy: largest;
+	  marker-type: ellipse;
+	  marker-fill: #FF5C00;
+	  marker-allow-overlap: false;
+	  marker-clip: false;
+	}
+	#popular_antennas [ user_count <= 80] {
+	   marker-width: 26.0;
+	}
+	#popular_antennas [ user_count <= 80] {
+	   marker-fill: #99000d;
+	}
+
+
+
+	#popular_antennas [ user_count <= 59] {
+	   marker-width: 23.3;
+	}
+	#popular_antennas [ user_count <= 59] {
+	   marker-fill: #cb181d;
+	}
+
+
+	#popular_antennas [ user_count <= 48] {
+	   marker-width: 21.7;
+	}
+	#popular_antennas [ user_count <= 48] {
+	   marker-fill: #ef3b2c;
+	}
+
+
+	#popular_antennas [ user_count <= 38] {
+	   marker-width: 18.0;
+	}
+	#popular_antennas [ user_count <= 38] {
+	   marker-fill: #fb6a4a;
+	}
+
+
+
+	#popular_antennas [ user_count <= 28] {
+	   marker-width: 13.3;
+	}
+	#popular_antennas [ user_count <= 28] {
+	   marker-fill: #fc9272;
+	}
+
+
+	#popular_antennas [ user_count <= 18] {
+	   marker-width: 9.7;
+	}
+	#popular_antennas [ user_count <= 18] {
+	   marker-fill: #fcbba1;
+	}
+
+
+	#popular_antennas [ user_count <= 10] {
+	   marker-width: 6.0;
+	}
+	#popular_antennas [ user_count <= 10] {
+	   marker-fill: #fee5d9;
+	}
+
+  </style>
+
+
+  <script type='html' id="legend_template">
+	<div class='cartodb-legend custom'>	
+	<div class="legend-title">Popularity</div>
+	<ul>
+		<li>
+			<div class="bullet" style="background:#99000d"></div>
+			[60 - 80]
+		</li>
+		<li>
+			<div class="bullet" style="background:#cb181d"></div>
+			[49 - 59]
+		</li>
+		<li>
+			<div class="bullet" style="background:#ef3b2c"></div>
+			[39 - 48]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fb6a4a"></div>
+			[29 - 38]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fc9272"></div>
+			[19 - 28]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fcbba1"></div>
+			[11 - 18]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fee5d9"></div>
+			 &lt;= 10
+		</li>
+	</ul>
+	</div>
+  </script>
+
+</head>
+
+ 
+<body>  
+  <div id='map'></div>
+  
+	<!-- For infowindow (click)-->
+	<script type="infowindow/html" id="infowindow_template">
+	    <div class="cartodb-popup v2">
+	    <a href="#close" class="cartodb-popup-close-button close">x</a>
+	    <div class="cartodb-popup-content-wrapper">
+	      <div class="cartodb-popup-content"> 
+	        <h4>Latitude</h4>
+	        <p>{{content.data.name}}</p>
+	        <h4>Longitude</h4>
+	        <p>{{content.data.name}}</p>        
+	        <h4>Popularity Count</h4>
+	        <p>{{content.data.name}}</p>
+	      </div>
+	    </div>
+	    <div class="cartodb-popup-tip-container"></div>
+	   </div>
+	</script>
+
+
+	<script>
+		function main() 
+		{
+			// Choose center and zoom level
+			var options = 
+			{
+				center: [40.4000, -3.6833],
+				zoom: 6
+			}
+
+			// instantiate map on specified DOM element
+      		var map_obj = new L.Map('map', options);
+
+			
+      		//#### get input dynamically ####
+			var limit_no = "3000";
+
+			//create layer souce
+			var layerSource1 = 
+			{
+				user_name: 'pk2504',
+				type: 'cartodb',
+		  		sublayers: 
+		  		[{
+		    		sql: "SELECT * FROM popular_antennas_full order by user_count desc limit " + limit_no,
+		    		cartocss: $('#bubble').html(),
+		    		interactivity: "user_count, latitude, longitude"
+		  		}]
+			} 
+
+			var subLayer
+			// add basemap to the map object
+			L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    		attribution: 'CartoDB'
+        	}).addTo(map_obj);
+
+			
+			cartodb.createLayer(map_obj, layerSource1)
+			.addTo(map_obj)
+			.on('done', function(layer) 
+			{
+		        subLayer = layer.getSubLayer(0);        
+		        subLayer.setInteraction(true);    
+		        // For Infowindow
+		        cdb.vis.Vis.addInfowindow(map_obj, subLayer,['user_count', 'latitude','longitude']);
+
+		        // For Legend
+		        var customLegend = new cdb.geo.ui.Legend({ 
+		            type: "custom",
+		            template: $('#legend_template').html()
+		        });
+		        var stackedLegend = new cdb.geo.ui.StackedLegend({
+           		legends: [customLegend]
+         		});
+
+	         	$('#map').append(stackedLegend.render().el);
+
+	    	})
+	    	.on('error', function(err) 
+	    	{
+	      	console.log("error: " + err);
+	    	});
+
+		}
+		window.onload = main;
+	</script>
+</body>
+</html>

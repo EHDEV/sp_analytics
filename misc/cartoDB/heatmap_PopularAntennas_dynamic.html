@@ -1,0 +1,107 @@
+<!-- HeatMap - Popular Antennas - Dynamic -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A simple visualization with CartoDB.js</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+
+  <style>
+    html, body, #map {
+      width:100%; 
+      height:100%; 
+      padding: 0; 
+      margin: 0;
+  </style>
+
+
+  <style type='cartocss/text' id='cartocss'>
+	 Map 
+	 {
+		-torque-frame-count:1;
+		-torque-animation-duration:10;
+		-torque-time-attribute:"cartodb_id";
+		-torque-aggregation-function:"count(cartodb_id)";
+		-torque-resolution:8;
+		-torque-data-aggregation:linear;
+	 }
+
+	#amenities
+	{
+	  image-filters: colorize-alpha(blue, cyan, lightgreen, yellow , orange, red);
+	  marker-file: url(http://s3.amazonaws.com/com.cartodb.assets.static/alphamarker.png);
+	  marker-fill-opacity: 0.4*[value];
+	  marker-width: 20;
+	}
+	#amenities[frame-offset=1] 
+	{
+	 marker-width:22;
+	 marker-fill-opacity:0.2; 
+	}
+	#amenities[frame-offset=2] 
+	{
+	 marker-width:24;
+	 marker-fill-opacity:0.1; 
+	}
+  </style>
+
+</head>
+
+
+<body>  
+  <div id='map'></div>
+  
+	<script>
+		function main() 
+		{
+			// Choose center and zoom level
+			var options = 
+			{
+				center: [40.4000, -3.6833],
+				zoom: 7
+			}
+
+			// instantiate map on specified DOM element
+      		var map_obj = new L.Map('map', options);
+
+			//#### get input dynamically ####
+			var limit_no = "3000";
+
+			//create layer souce
+			var layerSource1 = 
+			{
+				type: 'torque',
+		  		options: 
+		  		{
+		    		user_name: "pk2504",
+		    		query: "SELECT * FROM popular_antennas_full order by user_count desc limit " + limit_no,
+		    		cartocss: $('#cartocss').html()
+		  		}
+			}
+
+			// add basemap to the map object
+			L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    		attribution: 'CartoDB'
+        	}).addTo(map_obj);
+
+			
+			// add layer to map_obj
+			cartodb.createLayer(map_obj, layerSource1)
+			.addTo(map_obj)
+			.done(function(layer) 
+			{
+				var heatLayer = layer;
+    		})
+    		.error(function(err) 
+    		{
+      			console.log("error: " + err);
+    		});
+
+		}
+		window.onload = main;
+	</script>
+</body>
+</html>

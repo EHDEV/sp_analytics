@@ -1,0 +1,216 @@
+<!-- Bubble - Traffic of Antennas - Dynamic -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A simple visualization with CartoDB.js</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+
+  <style>
+    html, body, #map {
+      width:100%; 
+      height:100%; 
+      padding: 0; 
+      margin: 0;
+  </style>
+
+
+  <style type='cartocss/text' id='bubble'>
+	#traffic_antennas
+	{
+	  marker-fill-opacity: 0.9;
+	  marker-line-color: #FFF;
+	  marker-line-width: 1;
+	  marker-line-opacity: 1;
+	  marker-placement: point;
+	  marker-multi-policy: largest;
+	  marker-type: ellipse;
+	  marker-fill: #FF5C00;
+	  marker-allow-overlap: false;
+	  marker-clip: false;
+	}
+	#traffic_antennas [ traffic_count <= 22812] {
+	   marker-width: 26.0;
+	}
+	#traffic_antennas [ traffic_count <= 22812] {
+	   marker-fill: #99000d;
+	}
+
+	#traffic_antennas [ traffic_count <= 2000] {
+	   marker-width: 22.3;
+	}
+	#traffic_antennas [ traffic_count <= 2000] {
+	   marker-fill: #cb181d;
+	}
+
+
+	#traffic_antennas [ traffic_count <= 850] {
+	   marker-width: 17.7;
+	}
+	#traffic_antennas [ traffic_count <= 850] {
+	   marker-fill: #ef3b2c;
+	}
+
+	#traffic_antennas [ traffic_count <= 450] {
+	   marker-width: 14.0;
+	}
+	#traffic_antennas [ traffic_count <= 450] {
+	   marker-fill: #fb6a4a;
+	}
+
+	#traffic_antennas [ traffic_count <= 250] {
+	   marker-width: 11.3;
+	}
+	#traffic_antennas [ traffic_count <= 250] {
+	   marker-fill: #fc9272;
+	}
+
+	#traffic_antennas [ traffic_count <= 150] {
+	   marker-width: 8.7;
+	}
+	#traffic_antennas [ traffic_count <= 150] {
+	   marker-fill: #fcbba1;
+	}
+
+	#traffic_antennas [ traffic_count <= 75] {
+	   marker-width: 6.0;
+	}
+	#traffic_antennas [ traffic_count <= 75] {
+	   marker-fill: #fee5d9;
+	}
+  </style>
+
+  <script type='html' id="legend_template">
+  	<div class='cartodb-legend custom'>	
+	<div class="legend-title">Traffic</div>
+	<ul>
+		<li>
+			<div class="bullet" style="background:#99000d"></div>
+			(2000 - 22812]
+		</li>
+		<li>
+			<div class="bullet" style="background:#cb181d"></div>
+			(850 - 2000]
+		</li>
+		<li>
+			<div class="bullet" style="background:#ef3b2c"></div>
+			(450 - 850]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fb6a4a"></div>
+			(250 - 450]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fc9272"></div>
+			(150 - 250]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fcbba1"></div>
+			(75 - 150]
+		</li>
+		<li>
+			<div class="bullet" style="background:#fee5d9"></div>
+			&lt;= 75
+		</li>
+	</ul>
+	</div>
+  </script>
+
+</head>
+
+ 
+<body>  
+  <div id='map'></div>
+  
+	<!-- For infowindow (click)-->
+	<script type="infowindow/html" id="infowindow_template">
+	    <div class="cartodb-popup v2">
+	    <a href="#close" class="cartodb-popup-close-button close">x</a>
+	    <div class="cartodb-popup-content-wrapper">
+	      <div class="cartodb-popup-content"> 
+	        <h4>Traffic Count</h4>
+	        <p>{{content.data.name}}</p>
+	        <h4>Latitude</h4>
+	        <p>{{content.data.name}}</p>
+	        <h4>Longitude</h4>
+	        <p>{{content.data.name}}</p>        
+	        
+	      </div>
+	    </div>
+	    <div class="cartodb-popup-tip-container"></div>
+	   </div>
+	</script>
+
+
+	<script>
+		function main() 
+		{
+			// Choose center and zoom level
+			var options = 
+			{
+				center: [40.4000, -3.6833],
+				zoom: 6
+			}
+
+			// instantiate map on specified DOM element
+      		var map_obj = new L.Map('map', options);
+
+			
+			//#### get input dynamically ####
+			var limit_no = "3000";
+
+			//create layer souce
+			var layerSource1 = 
+			{
+				user_name: 'pk2504',
+				type: 'cartodb',
+		  		sublayers: 
+		  		[{
+		    	   sql: "SELECT * FROM traffic_antennas_full order by traffic_count desc limit " + limit_no,
+		    	   cartocss: $('#bubble').html(),
+		    	   interactivity: "traffic_count, latitude, longitude"
+		  		}]
+			} 
+
+			var subLayer
+			// add basemap to the map object
+			L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    		attribution: 'CartoDB'
+        	}).addTo(map_obj);
+
+			
+			cartodb.createLayer(map_obj, layerSource1)
+			.addTo(map_obj)
+			.on('done', function(layer) 
+			{
+		        subLayer = layer.getSubLayer(0);        
+		        subLayer.setInteraction(true);    
+		        // For Infowindow
+		        cdb.vis.Vis.addInfowindow(map_obj, subLayer,['traffic_count', 'latitude','longitude']);   
+
+		        // For Legend
+		        var customLegend = new cdb.geo.ui.Legend({ 
+		            type: "custom",
+		            template: $('#legend_template').html()
+		        });
+		        var stackedLegend = new cdb.geo.ui.StackedLegend({
+           		legends: [customLegend]
+         		});
+
+	         	$('#map').append(stackedLegend.render().el);
+
+
+	    	})
+	    	.on('error', function(err) 
+	    	{
+	      	console.log("error: " + err);
+	    	});
+
+		}
+		window.onload = main;
+	</script>
+</body>
+</html>
