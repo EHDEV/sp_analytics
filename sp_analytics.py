@@ -35,13 +35,23 @@ def dashboard():
     da = domain_analytics()
 
     dlist = []
+    wlist = []
     userid=''
     top_locs_data = da.user_activity_hourly(userid)
+
+    stat_by_day = da.traffic_weekday()
+
+    for row in stat_by_day:
+        wlist += [dict(row)]
 
     for row in top_locs_data:
         dlist += [dict(row)]
 
-    return render_template('charts_test.html', dictionary=json.dumps(dlist, ensure_ascii=False))
+    dictionary = dict(
+        stat_by_day=wlist,
+        stat_by_hour=dlist
+    )
+    return render_template('charts_test.html', dictionary=json.dumps(dictionary, ensure_ascii=False))
 
 @app.route('/app/cell_traffic')
 def cell_traffic():

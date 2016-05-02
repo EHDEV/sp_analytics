@@ -10,6 +10,7 @@
             font-weight: 600;
             font-size: 40px;
 
+
         }
 
         .green {
@@ -81,6 +82,7 @@
             color: darkslategray;
             text-align: left;
             font-weight: 500;
+            background-color: whitesmoke;
         }
 
         span {
@@ -108,18 +110,29 @@
         var data = JSON.parse('{{ dictionary | safe}}');
 
         var cat = [];
-        for (var h in data) {
-            cat.push(data[h]["hour_of_day"]);
+        for (var h in data["stat_by_hour"]) {
+            cat.push(data["stat_by_hour"][h]["hour_of_day"]);
         }
         var freq = [];
-        for (var key in data) {
+        for (var key in data["stat_by_hour"]) {
             console.log(key);
-            freq.push(data[key]["freq"]);
+            freq.push(data["stat_by_hour"][key]["freq"]);
             {#        dates.push(d[key]['date']);#}
             {#        opens.push(d[key]['Open']);#}
             {#        trends.push(d[key]['trend']);#}
             {#        volume.push(d[key]['Volume']);#}
 
+        }
+
+        var cat_day = []
+
+        for (var d in data["stat_by_day"]) {
+            cat_day.push(data["stat_by_day"][d]["day_of_week"]);
+        }
+        var freq_day = [];
+        for (var row in data["stat_by_day"]) {
+            console.log(row);
+            freq_day.push(data["stat_by_day"][row]["freq"]);
         }
         function draw_chart1() {
 
@@ -146,8 +159,9 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Frequency of Network Updates'
+                        text: 'Frequency of Call/Text Events'
                     },
+                    tickPositions: [0, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000]
                     lineWidth: 0,
                     lineColor: 'transparent',
                     plotLines: [{
@@ -195,7 +209,7 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Frequency of Network Updates'
+                        text: 'Frequency of Call/Text Events'
                     },
                     lineWidth: 0,
                     lineColor: 'transparent',
@@ -239,11 +253,11 @@
                     title: {
                         text: 'Hour of Day'
                     },
-                    categories: cat
+                    categories: cat_day
                 },
                 yAxis: {
                     title: {
-                        text: 'Frequency of Network Updates'
+                        text: 'Frequency of Call/Text Events'
                     },
                     lineWidth: 0,
                     lineColor: 'transparent',
@@ -261,7 +275,7 @@
                 },
                 series: [{
                     name: 'Hour',
-                    data: freq
+                    data: freq_day
                 }]
             });
         }
@@ -269,7 +283,7 @@
 
             $('#container3').highcharts({
                 title: {
-                    text: 'Lifetime Call and Text Events by Hour of Day',
+                    text: 'Lifetime Call and Text Events by Day of Week',
                     x: -20 //center
                 },
                 chart: {
@@ -287,7 +301,7 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Frequency of Network Updates'
+                        text: 'Frequency of Call/Text Events'
                     },
                     lineWidth: 0,
                     lineColor: 'transparent',
@@ -335,39 +349,41 @@
         <row>
             <div>
                 <h1 class="glyphicon glyphicon-stats"> Dashboard</h1>
-                <hr>
+                <p>
+
+                </p>
             </div>
         </row>
         <div class="row">
             <div class="col-md-2 mycontent-left green">
-                <span class="uptitle glyphicon glyphicon-user"> Total #  Active Users </span>
+                <span class="uptitle glyphicon glyphicon-user"> Active Users <p>(Total) </p></span>
 
                 <div> 5432</div>
             </div>
             <div class="col-md-2 mycontent-left">
-                <span class="uptitle glyphicon glyphicon-signal"> Total # Active Cell Towers </span>
+                <span class="uptitle glyphicon glyphicon-signal"> Active Cell Towers <p>(Total)</p> </span>
 
                 <div class="metrics"> 2234</div>
             </div>
             <div class="col-md-2 mycontent-left">
-                <span class="uptitle glyphicon glyphicon-signal"> # Calls/Texts made/received per Day</span>
+                <span class="uptitle glyphicon glyphicon-phone"> Daily Call/Text Events(Avg)</span>
 
                 <div class="metrics"> 3202</div>
             </div>
             <div class="col-md-2 mycontent-left">
-                <span class="uptitle glyphicon glyphicon-user"> Average # of Users per Cell</span>
+                <span class="uptitle glyphicon glyphicon-user"> Users per Cell <p>(Avg)</p></span>
 
                 <div class="metrics">5433</div>
             </div>
             <div class="col-md-2 mycontent-left">
-                <span class="uptitle glyphicon glyphicon-signal"> # Cells Connected per User per Day</span>
+                <span class="uptitle glyphicon glyphicon-flash"> Cell Traffic <p>(Total) </p></span>
 
                 <div class="metrics">4005</div>
             </div>
             <div class="col-md-2 mycontent-left">
-                <span class="uptitle glyphicon glyphicon-flag"> Total # Unique Amenities </span>
+                <span class="uptitle glyphicon glyphicon-flag"> Unique Amenities <p>(Total)</p> </span>
 
-                <div class="metrics"> 15096</div>
+                <div class="metrics"> 3032</div>
             </div>
         </div>
         <row>
@@ -399,11 +415,11 @@
                         <h3 class="panel-title">
                             <a data-toggle="collapse"
                                href="#collapseOne">
-                                User Activity
+                                All Events by Hour of Day
                             </a>
                         </h3>
                     </div>
-                    <div id="collapseOne" class="panel-collapse collapse">
+                    <div id="collapseOne" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <div id="container0" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
                         </div>
@@ -418,7 +434,7 @@
                             </a>
                         </h3>
                     </div>
-                    <div id="collapseTwo" class="panel-collapse collapse">
+                    <div id="collapseTwo" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <div id="container1" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
                         </div>
@@ -429,7 +445,7 @@
                         <h3 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion"
                                href="#collapseThree">
-                                Other
+                                All Events by Day of Week
                             </a>
                         </h3>
                     </div>

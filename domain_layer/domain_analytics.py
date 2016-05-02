@@ -20,12 +20,36 @@ class domain_analytics:
                   --AND e.userid = '{}'
             GROUP BY
               hour_of_day
-            ORDER BY hour_of_day, freq DESC
-            limit 50;
-        '''.format(user_id)
+            ORDER BY hour_of_day, freq DESC;        '''.format(user_id)
 
         data = self.dao.query(q)
         return data
+
+    def traffic_weekday(self):
+        q = '''
+            select case when trim(a.day_of_week) = 'monday' then 1
+  when trim(a.day_of_week) = 'tuesday' then 2
+  when trim(a.day_of_week) = 'wednesday' then 3
+  when trim(a.day_of_week) = 'thursday' then 4
+  when trim(a.day_of_week) = 'friday' then 5
+  when trim(a.day_of_week) = 'saturday' then 6
+  when trim(a.day_of_week) = 'sunday' then  7 END day_num, *, a.day_of_week
+  FROM (
+    SELECT
+      count(*)                  freq,
+      to_char(e.startts, 'day') day_of_week
+    FROM events e
+    WHERE eventtype IN (5, 6, 7)
+    --AND e.userid = '{}'
+    GROUP BY
+      2
+  ) a
+ORDER BY day_num
+        '''
+
+        data = self.dao.query(q)
+        return data
+
 
     def user_location_hourly(self, user_id, start_ts='', end_ts=''):
         params = dict(userid=user_id, starts=start_ts, end_ts=end_ts)
