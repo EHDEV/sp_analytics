@@ -1,0 +1,222 @@
+<!-- HeatMap - Amenities - all, filtered, any 1 - Dynamic -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A simple visualization with CartoDB.js</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+
+  <style>
+    html, body, #map {
+      width:100%; 
+      height:100%; 
+      padding: 0; 
+      margin: 0;
+  }
+      #desc {
+          position: absolute;
+          top: 10px;
+          left: 45px;
+          border: 1px solid #999;
+          border-radius: 5px;
+          width: 275px;
+          background: rgba(255,255,255,0.9);
+          padding: 0 10px;
+      }
+      #sql-buttons {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+      }
+      .layer_selector {
+          background: rgba(255,255,255,0.9);
+          border-radius: 5px;
+          padding: 0;
+          border: 1px solid #999;
+          width: 165px;
+      }
+      .layer_selector > p {
+          padding: 15px 30px;
+          border-bottom: 1px solid #999;
+          margin-bottom: 0;
+      }
+      .layer_selector ul {
+          padding: 0; 
+          margin: 0;
+          list-style-type: none;
+      }
+      .layer_selector li {
+          padding: 10px 25px;
+          font-family: Helvetica, Arial;
+          font-size: 13px;
+          color: #444;
+          cursor: pointer;
+      }
+      .layer_selector li:not(:last-child) {
+          border-bottom: 1px solid #999;
+      }
+      .layer_selector li:hover {
+          background-color: #F0F0F0;
+          cursor: pointer;
+      }
+    </style>
+
+
+  <style type='cartocss/text' id='cartocss'>
+	 Map 
+	 {
+		-torque-frame-count:1;
+		-torque-animation-duration:10;
+		-torque-time-attribute:"cartodb_id";
+		-torque-aggregation-function:"count(cartodb_id)";
+		-torque-resolution:8;
+		-torque-data-aggregation:linear;
+	 }
+
+	#amenities
+	{
+	  image-filters: colorize-alpha(blue, cyan, lightgreen, yellow , orange, red);
+	  marker-file: url(http://s3.amazonaws.com/com.cartodb.assets.static/alphamarker.png);
+	  marker-fill-opacity: 0.4*[value];
+	  marker-width: 20;
+	}
+	#amenities[frame-offset=1] 
+	{
+	 marker-width:22;
+	 marker-fill-opacity:0.2; 
+	}
+	#amenities[frame-offset=2] 
+	{
+	 marker-width:24;
+	 marker-fill-opacity:0.1; 
+	}
+  </style>
+
+</head>
+
+
+<body>  
+  <div id='map'></div>
+
+	   
+
+	   <!-- Buttons for layer selector -->
+	   <div id="sql-buttons" class="layer_selector">
+	        <p>Select</p>
+	        <ul>
+	            <li data="">All amenities</li>
+	            <li data=" where amenity not in ('bench','drinking_water','recycling','parking', 'waste_basket','telephone','waste_disposal','bicycle_parking','parking_entrance')">Filtered amenities</li>
+	            <li data="1">bar</li>
+	            <li data="2">restaurant</li>
+	            <li data="3">library</li>
+	            <li data="4">pharmacy</li>
+	            <li data="5">hospital</li>
+	        </ul>
+       </div>
+
+
+	<script>
+		function main() 
+		{
+
+			// Choose center and zoom level
+			var options = 
+			{
+				center: [40.4000, -3.6833],
+				zoom: 7
+			}
+
+			// instantiate map on specified DOM element
+      		var map_obj = new L.Map('map', options);
+
+
+			// add basemap to the map object
+			L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    		attribution: 'CartoDB'
+        	}).addTo(map_obj);
+
+
+			//define layer
+			var layerSource1 = 
+			{
+				type: 'torque',
+		  		options: 
+		  		{
+		    			user_name: "pk2504",
+		    			query: "SELECT * FROM pk2504.amenities",
+		    			cartocss: $('#cartocss').html()
+		  		}
+			}
+
+			var heatLayer //Defined variable for global access 
+
+			//#### get input dynamically ####
+			var amenity_name_1 = " 'bar' ";
+			var amenity_name_2 = " 'restaurant' ";
+			var amenity_name_3 = " 'library' ";
+			var amenity_name_4 = " 'pharmacy' ";
+			var amenity_name_5 = " 'hospital' ";
+
+
+			//Select Layer - Select SQL query
+			function createSelector(layer) 
+    		{
+				  var condition = "";
+				  var $options = $(".layer_selector").find("li");
+				  $options.click(function(e) {
+				  layer.stop();
+			      var $li = $(e.target);
+			      var selected = $li.attr('data'); 
+			      
+			      if(selected ==="1"){
+			      	var newSQL = "SELECT * FROM pk2504.amenities where amenity like" + amenity_name_1;
+			      }
+			      else if(selected ==="2"){
+			      	var newSQL = "SELECT * FROM pk2504.amenities where amenity like" + amenity_name_2;
+			      }
+			      else if(selected ==="3"){
+			      	var newSQL = "SELECT * FROM pk2504.amenities where amenity like" + amenity_name_3;
+			      }
+			      else if(selected ==="4"){
+			      	var newSQL = "SELECT * FROM pk2504.amenities where amenity like" + amenity_name_4;
+			      }
+			      else if(selected ==="5"){
+			      	var newSQL = "SELECT * FROM pk2504.amenities where amenity like" + amenity_name_5;
+			      }
+
+			      else{
+			      	var newSQL = "SELECT * FROM pk2504.amenities " + selected;
+			      }
+			      
+			      console.log(newSQL);
+			      layer
+			        .setSQL(newSQL)
+			        .on('load', function() {
+			            layer.play();
+			        });
+		  	    });
+			}
+
+			
+			// Create Layer - add layer to map_obj
+			cartodb.createLayer(map_obj, layerSource1)
+			.addTo(map_obj)
+			.done(function(layer) 
+			{
+				heatLayer = layer;
+    			createSelector(heatLayer);
+    		})
+    		.error(function(err) 
+    		{
+      			console.log("error: " + err);
+    		});
+
+
+		}
+		window.onload = main;
+	</script>
+</body>
+</html>
