@@ -38,9 +38,10 @@ class DP:
 
     def get_sims(self, users, euc=False):
         """
-
+        Gets similarity matrix
         dists - a distance matrix
         product - a product id (integer)
+
         """
         if euc:
             dists = self.euc_dists
