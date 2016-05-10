@@ -7,7 +7,7 @@ class DP:
     def __init__(self):
         df_cells_feat = p.DataFrame.from_csv("/Users/EH/columbia/projects/capstone_sp/data/1000cell_user_freq_lifetime.csv", index_col=None)
         df_cells_feat_piv = df_cells_feat.pivot(index='userid', columns='cellid', values='freq_updates')
-        # df_cells_feat_piv['userid'] = df_cells_feat_piv.index
+        # # df_cells_feat_piv['userid'] = df_cells_feat_piv.index
         da = Dao()
 
         q = '''

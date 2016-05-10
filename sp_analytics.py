@@ -36,6 +36,7 @@ def dashboard():
 
     dlist = []
     wlist = []
+    agg_list = []
     userid=''
     top_locs_data = da.user_activity_hourly(userid)
 
@@ -47,9 +48,15 @@ def dashboard():
     for row in top_locs_data:
         dlist += [dict(row)]
 
+    stats_agg = da.get_desc_stats()
+
+    for row in stats_agg:
+        agg_list+= [dict(row)]
+
     dictionary = dict(
         stat_by_day=wlist,
-        stat_by_hour=dlist
+        stat_by_hour=dlist,
+        stat_aggeregates=agg_list
     )
     return render_template('charts_test.html', dictionary=json.dumps(dictionary, ensure_ascii=False))
 
